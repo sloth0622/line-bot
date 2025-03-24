@@ -6,10 +6,12 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import os
 
 # 設定環境變數
-LINE_ACCESS_TOKEN = os.getenv("LINE_ACCESS_TOKEN")
-LINE_SECRET = os.getenv("LINE_SECRET")
+LINE_ACCESS_TOKEN = os.getenv("LINE_ACCESS_TOKEN")  # 確保在 Vercel 或環境中設置這個變數
+LINE_SECRET = os.getenv("LINE_SECRET")  # 確保在 Vercel 或環境中設置這個變數
 
 app = Flask(__name__)
+
+# 初始化 LineBotApi 和 WebhookHandler
 line_bot_api = LineBotApi(LINE_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_SECRET)
 
@@ -41,10 +43,12 @@ def handle_message(event):
     user_message = event.message.text.strip()
     matched_replies = []
 
+    # 檢查用戶的消息是否與任何關鍵字匹配
     for keyword, reply_list in responses.items():
         if keyword in user_message:
             matched_replies.extend(reply_list)
 
+    # 回覆隨機選擇的訊息
     if matched_replies:
         reply_text = random.choice(matched_replies)
         line_bot_api.reply_message(
@@ -53,5 +57,6 @@ def handle_message(event):
         )
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
+    # Vercel 會設定PORT環境變數
+    port = int(os.environ.get("PORT", 10000))  # 設定默認端口為 10000
     app.run(host="0.0.0.0", port=port)
