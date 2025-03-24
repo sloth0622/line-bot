@@ -5,6 +5,10 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
+
 # 設定環境變數
 LINE_ACCESS_TOKEN = os.getenv("LINE_ACCESS_TOKEN")  # 確保在 Vercel 或環境中設置這個變數
 LINE_SECRET = os.getenv("LINE_SECRET")  # 確保在 Vercel 或環境中設置這個變數
