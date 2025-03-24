@@ -6,8 +6,8 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import os
 
 # 設定環境變數
-LINE_ACCESS_TOKEN = os.getenv("LINE_ACCESS_TOKEN")
-LINE_SECRET = os.getenv("LINE_SECRET")
+LINE_ACCESS_TOKEN = os.getenv("3gsVmSj1UW2XK/IN7/G9c77cn82fpwlonpCWbc+zGyJWF/G5k+kM0St971n6YOJT3DvAVch8Wys/5/0l+ldigcSxCpf0q3PonANwzmR1ucjJMEA/0Dka/2Vtg+Jh4APU3BNS1n/wlYChUpaPLCSSAwdB04t89/1O/w1cDnyilFU=")
+LINE_SECRET = os.getenv("89bbfef0b58f4d0dbc49b5e65e4ee7e6")
 
 app = Flask(__name__)
 line_bot_api = LineBotApi(LINE_ACCESS_TOKEN)
