@@ -21,7 +21,7 @@ handler = WebhookHandler(LINE_SECRET)
 
 # 設定圖片回覆
 image_responses = {
-    "貓咪": "/static/images/cat.jpg",
+    "吃我屌": "/static/images/吃我屌.jpg",
     "風景": "/static/images/scenery.jpg"
 }
 
