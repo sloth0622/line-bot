@@ -21,8 +21,9 @@ handler = WebhookHandler(LINE_SECRET)
 
 # 設定文字回覆
 responses = {
-    "吃啥": ["https://github.com/sloth0622/line-bot/blob/main/static/images/%E5%90%83%E6%88%91%E5%B1%8C.jpg?raw=true"],
-    "閉嘴": ["管好你自己"]
+    "吃啥": ["弘爺", "ㄐㄐ", "阿基", "大吉祥", "吉購吉", "傻師傅", "維克"],
+    "閉嘴": ["管好你自己"],
+    "?":["?"]
 }
 
 # 設定圖片回覆
