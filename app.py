@@ -37,6 +37,7 @@ responses = {
     "還是等等":["翹","翹課","問就是翹"],
     "還是我們":["翹","翹課","問就是翹"],
     "下棋":"不要"
+
 }
 
 # 設定圖片回覆
@@ -99,7 +100,7 @@ def handle_message(event):
     
     # 圖片回應：僅當完全匹配時才回覆
     elif user_message in image_responses:
-        image_url = image_responses[user_message]  # 使用 GitHub 上的圖片 URL
+        image_url = random.choice(image_responses[user_message])  # 使用 GitHub 上的圖片 URL
         print(f"回覆圖片: {image_url}")  # 輸出回覆的圖片 URL
         line_bot_api.reply_message(
             event.reply_token,
