@@ -1,6 +1,6 @@
 import random
 import os
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
@@ -24,17 +24,10 @@ responses = {
     "你好": ["你好！", "哈囉！", "安安！"],
     "天氣": ["今天天氣不錯！", "看起來快下雨了！", "要記得帶傘喔！"],
     "笑話": ["為什麼雞過馬路？因為它想過去！", "今天我遇到一個笑話，結果他比我還會笑！"],
-    "吃啥": ["大頭", "ㄐㄐ", "阿基", "大吉祥", "吉購吉", "傻師傅", "維克"],
-    "吃我屌": "https://github.com/sloth0622/line-bot/blob/main/static/images/%E5%90%83%E6%88%91%E5%B1%8C.jpg?raw=true"
-
+    "吃啥": ["大頭", "ㄐㄐ", "阿基", "大吉祥", "吉購吉", "傻師傅", "維克"]
 }
 
-# 讓 Flask 提供 `static/images/` 內的圖片
-@app.route("/static/images/<filename>")
-def serve_image(filename):
-    return send_from_directory("static/images", filename)
-
-# 設定圖片回應（改為使用 Flask 提供的本地圖片 URL）
+# 設定圖片回覆
 image_responses = {
     "吃我屌": "https://github.com/sloth0622/line-bot/blob/main/static/images/%E5%90%83%E6%88%91%E5%B1%8C.jpg?raw=true"
 }
@@ -69,7 +62,7 @@ def handle_message(event):
     
     # 圖片回應：僅當完全匹配時才回覆
     elif user_message in image_responses:
-        image_url = request.host_url + image_responses[user_message]  # 確保 URL 為完整路徑
+        image_url = image_responses[user_message]  # 使用 GitHub 上的圖片 URL
         line_bot_api.reply_message(
             event.reply_token,
             ImageSendMessage(
