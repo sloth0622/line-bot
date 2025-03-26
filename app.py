@@ -58,7 +58,7 @@ image_responses = {
 
 # 多關鍵字匹配回覆
 multi_keyword_responses = {
-    ("下棋"):["雲科左為申請出戰"]
+    ("下棋","嗎"):["雲科左為申請出戰"]
 }
 
 @app.route("/", methods=["GET"])
@@ -107,7 +107,7 @@ def handle_message(event):
     # 多關鍵字匹配：檢查訊息是否包含多個關鍵字
     else:
         for keywords, reply_text in multi_keyword_responses.items():
-            if any(keyword in user_message for keyword in keywords):  # 檢查是否包含所有關鍵字
+            if all(keyword in user_message for keyword in keywords):  # 檢查是否包含所有關鍵字
                 print(f"回覆文字: {reply_text}")  # 輸出回覆的文字
                 line_bot_api.reply_message(
                     event.reply_token,
