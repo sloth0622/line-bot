@@ -52,9 +52,12 @@ def callback():
 def handle_message(event):
     user_message = event.message.text.strip()
 
+    print(f"收到的訊息: {user_message}")  # 輸出收到的消息，幫助除錯
+
     # 文字回應：僅當完全匹配時才回覆
     if user_message in responses:
         reply_text = random.choice(responses[user_message])
+        print(f"回覆文字: {reply_text}")  # 輸出回覆的文字
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=reply_text)
@@ -63,6 +66,7 @@ def handle_message(event):
     # 圖片回應：僅當完全匹配時才回覆
     elif user_message in image_responses:
         image_url = image_responses[user_message]  # 使用 GitHub 上的圖片 URL
+        print(f"回覆圖片: {image_url}")  # 輸出回覆的圖片 URL
         line_bot_api.reply_message(
             event.reply_token,
             ImageSendMessage(
@@ -70,6 +74,8 @@ def handle_message(event):
                 preview_image_url=image_url
             )
         )
+    else:
+        print(f"未匹配的訊息: {user_message}")  # 輸出未匹配的消息
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
