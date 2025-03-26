@@ -43,12 +43,12 @@ responses = {
 # 設定圖片回覆
 image_responses = {
     #吃屌系列
-    "吃我屌": "https://github.com/sloth0622/line-bot/blob/main/static/images/%E5%90%83%E6%88%91%E5%B1%8C.jpg?raw=true",
-    "幫我吹" :"https://github.com/sloth0622/line-bot/blob/main/static/images/%E6%98%8E%E5%A4%A9%E5%B9%AB%E4%BD%A0%E7%B4%A0.jpg?raw=true",
-    "幫我素" :"https://github.com/sloth0622/line-bot/blob/main/static/images/%E6%98%8E%E5%A4%A9%E5%B9%AB%E4%BD%A0%E7%B4%A0.jpg?raw=true",
+    "吃我屌": ["https://github.com/sloth0622/line-bot/blob/main/static/images/%E5%90%83%E6%88%91%E5%B1%8C.jpg?raw=true"],
+    "幫我吹" :["https://github.com/sloth0622/line-bot/blob/main/static/images/%E6%98%8E%E5%A4%A9%E5%B9%AB%E4%BD%A0%E7%B4%A0.jpg?raw=true"],
+    "幫我素" :["https://github.com/sloth0622/line-bot/blob/main/static/images/%E6%98%8E%E5%A4%A9%E5%B9%AB%E4%BD%A0%E7%B4%A0.jpg?raw=true"],
 
-    "= =" : "https://github.com/sloth0622/line-bot/blob/main/static/images/=%20=.jpg?raw=true",
-    "==" : "https://github.com/sloth0622/line-bot/blob/main/static/images/=%20=.jpg?raw=true",
+    "= =" : ["https://github.com/sloth0622/line-bot/blob/main/static/images/=%20=.jpg?raw=true"],
+    "==" : ["https://github.com/sloth0622/line-bot/blob/main/static/images/=%20=.jpg?raw=true"],
     "下棋":"https://github.com/sloth0622/line-bot/blob/main/static/images/%E4%B8%8B%E6%A3%8B.jpg?raw=true,",
     "我出來了" : "https://github.com/sloth0622/line-bot/blob/main/static/images/%E6%88%91%E5%87%BA%E4%BE%86%E4%BA%86.jpg?raw=true",
     "抱歉": "https://github.com/sloth0622/line-bot/blob/main/static/images/%E6%8A%B1%E6%AD%89.jpg?raw=true",
