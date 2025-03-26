@@ -31,6 +31,12 @@ image_responses = {
     "吃我屌": "https://github.com/sloth0622/line-bot/blob/main/static/images/%E5%90%83%E6%88%91%E5%B1%8C.jpg?raw=true"
 }
 
+# 多關鍵字匹配回覆
+multi_keyword_responses = {
+    ("吃", "大吉祥"): "你喜歡吃大吉祥啊！",
+    ("幫忙", "吃飯"): "有什麼我可以幫忙的嗎？你要一起吃飯嗎？"
+}
+
 @app.route("/", methods=["GET"])
 def home():
     return "LINE Bot 正在運行！"
@@ -73,8 +79,19 @@ def handle_message(event):
                 preview_image_url=image_url
             )
         )
+    
+    # 多關鍵字匹配：檢查訊息是否包含多個關鍵字
     else:
-        print(f"未匹配的訊息: {user_message}")  # 輸出未匹配的消息
+        for keywords, reply_text in multi_keyword_responses.items():
+            if all(keyword in user_message for keyword in keywords):  # 檢查是否包含所有關鍵字
+                print(f"回覆文字: {reply_text}")  # 輸出回覆的文字
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=reply_text)
+                )
+                return  # 停止繼續檢查其他條件
+
+    print(f"未匹配的訊息: {user_message}")  # 輸出未匹配的消息
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
