@@ -41,15 +41,18 @@ responses = {
 # 設定圖片回覆
 image_responses = {
     "吃我屌": "https://github.com/sloth0622/line-bot/blob/main/static/images/%E5%90%83%E6%88%91%E5%B1%8C.jpg?raw=true",
-    ("= =","==") : "https://github.com/sloth0622/line-bot/blob/main/static/images/=%20=.jpg?raw=true",
+    "= =" : "https://github.com/sloth0622/line-bot/blob/main/static/images/=%20=.jpg?raw=true",
+    "==" : "https://github.com/sloth0622/line-bot/blob/main/static/images/=%20=.jpg?raw=true",
     "下棋":"https://github.com/sloth0622/line-bot/blob/main/static/images/%E4%B8%8B%E6%A3%8B.jpg?raw=true,",
     "我出來了" : "https://github.com/sloth0622/line-bot/blob/main/static/images/%E6%88%91%E5%87%BA%E4%BE%86%E4%BA%86.jpg?raw=true",
     "抱歉": "https://github.com/sloth0622/line-bot/blob/main/static/images/%E6%8A%B1%E6%AD%89.jpg?raw=true",
-    ("幫我吹","幫我素") :"https://github.com/sloth0622/line-bot/blob/main/static/images/%E6%98%8E%E5%A4%A9%E5%B9%AB%E4%BD%A0%E7%B4%A0.jpg?raw=true",
+    "幫我吹" :"https://github.com/sloth0622/line-bot/blob/main/static/images/%E6%98%8E%E5%A4%A9%E5%B9%AB%E4%BD%A0%E7%B4%A0.jpg?raw=true",
+    "幫我素" :"https://github.com/sloth0622/line-bot/blob/main/static/images/%E6%98%8E%E5%A4%A9%E5%B9%AB%E4%BD%A0%E7%B4%A0.jpg?raw=true",
     "為甚麼":"https://github.com/sloth0622/line-bot/blob/main/static/images/%E7%82%BA%E7%94%9A%E9%BA%BC.jpg?raw=true",
     "破防了":"https://github.com/sloth0622/line-bot/blob/main/static/images/%E7%A0%B4%E6%88%BF%E4%BA%86.jpg?raw=true",
     "累累":"https://github.com/sloth0622/line-bot/blob/main/static/images/%E7%B4%AF%E7%B4%AF.jpg?raw=true",
-    ("騷","真騷") : "https://github.com/sloth0622/line-bot/blob/main/static/images/%E8%89%98.jpg?raw=true",
+    "騷" : "https://github.com/sloth0622/line-bot/blob/main/static/images/%E8%89%98.jpg?raw=true",
+    "真騷" : "https://github.com/sloth0622/line-bot/blob/main/static/images/%E8%89%98.jpg?raw=true",
     "蛤" : "https://github.com/sloth0622/line-bot/blob/main/static/images/%E8%9B%A4.jpg?raw=true"
 }
 
@@ -104,7 +107,7 @@ def handle_message(event):
     # 多關鍵字匹配：檢查訊息是否包含多個關鍵字
     else:
         for keywords, reply_text in multi_keyword_responses.items():
-            if all(keyword in user_message for keyword in keywords):  # 檢查是否包含所有關鍵字
+            if any(keyword in user_message for keyword in keywords):  # 檢查是否包含所有關鍵字
                 print(f"回覆文字: {reply_text}")  # 輸出回覆的文字
                 line_bot_api.reply_message(
                     event.reply_token,
