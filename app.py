@@ -1,6 +1,6 @@
 import random
 import os
-import json  # 🔥 欠款功能
+import json
 from flask import Flask, request, jsonify
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
@@ -20,22 +20,24 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(LINE_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_SECRET)
 
-# 🔥 欠款功能：讀取 debts.json
-def load_debts():
-    global debts
-    if os.path.exists("debts.json"):
-        with open("debts.json", "r", encoding="utf-8") as f:
-            debts = json.load(f)
-    else:
-        debts = {}
+# 欠款紀錄檔案
+DEBTS_FILE = "debts.json"
 
-# 🔥 欠款功能：儲存到 debts.json
-def save_debts():
-    with open("debts.json", "w", encoding="utf-8") as f:
+# 載入欠款資料
+def load_debts():
+    if os.path.exists(DEBTS_FILE):
+        with open(DEBTS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    else:
+        return {}
+
+# 儲存欠款資料
+def save_debts(debts):
+    with open(DEBTS_FILE, "w", encoding="utf-8") as f:
         json.dump(debts, f, ensure_ascii=False, indent=4)
 
-# 一開始就先讀取現有欠款資料
-load_debts()
+# 全域變數 debts
+debts = load_debts()
 
 # 設定文字回覆
 responses = {
@@ -78,7 +80,7 @@ image_responses = {
 
 # 多關鍵字匹配回覆
 multi_keyword_responses = {
-    ("下棋","嗎"):"雲科左為申請出戰"
+    ("下棋", "嗎"): "雲科左為申請出戰"
 }
 
 @app.route("/", methods=["GET"])
@@ -99,66 +101,94 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    global debts  # 🔥 要存新的 debts
     user_message = event.message.text.strip()
-    user_id = event.source.user_id  # 🔥 拿使用者 ID
-    print(f"收到的訊息: {user_message} (user_id: {user_id})")  # 幫助除錯
+    user_id = event.source.user_id
 
-    # 欠款記錄指令
-    if user_message.startswith("我欠"):
+    print(f"收到的訊息: {user_message} (user_id: {user_id})")
+
+    # 1. 欠款功能：新增
+    if "我欠" in user_message and "元" in user_message:
         try:
-            # 範例: 我欠小明40元
-            target = user_message[2:user_message.index("元")]
-            name = target[:-2]  # 小明
-            amount = int(target[-2:])  # 40
+            parts = user_message.split("欠")[1].split("元")[0]
+            who = ''.join([c for c in parts if not c.isdigit()]).strip()
+            amount = int(''.join([c for c in parts if c.isdigit()]))
 
             if user_id not in debts:
-                debts[user_id] = []
-            debts[user_id].append({
-                "to": name,
-                "amount": amount
-            })
-            save_debts()
+                debts[user_id] = {"debt_list": []}
 
+            debts[user_id]["debt_list"].append({"who": who, "amount": amount})
+            save_debts(debts)
+
+            reply = f"已記錄：你欠 {who} {amount} 元"
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text=f"已記錄，你欠{name} {amount}元。")
+                TextSendMessage(text=reply)
             )
         except Exception as e:
-            print(f"錯誤: {e}")
+            print(f"記錄欠款失敗：{e}")
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text="格式錯誤，請用『我欠XXX40元』這樣輸入！")
+                TextSendMessage(text="格式錯誤，請用『我欠小明40元』這樣輸入！")
             )
         return
-    
-    # 查詢欠款
-    if user_message == "查欠款":
-        if user_id in debts and debts[user_id]:
-            reply_text = "你的欠款紀錄：\n"
-            for debt in debts[user_id]:
-                reply_text += f"- 欠 {debt['to']} {debt['amount']}元\n"
+
+    # 2. 欠款功能：查詢
+    if user_message in ["查欠款", "查詢欠款"]:
+        if user_id not in debts or not debts[user_id]["debt_list"]:
+            reply = "你沒有任何欠款紀錄喔！"
         else:
-            reply_text = "你目前沒有欠款紀錄。"
+            reply = "你的欠款紀錄：\n"
+            for debt in debts[user_id]["debt_list"]:
+                reply += f"- 欠 {debt['who']} {debt['amount']}元\n"
+        
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=reply)
+        )
+        return
+
+    # 3. 欠款功能：清除
+    if user_message.startswith("清除欠款"):
+        target = user_message.replace("清除欠款", "").strip()
+
+        if user_id in debts:
+            if target == "":
+                debts[user_id]["debt_list"] = []
+                reply = "你的所有欠款紀錄都已清除！"
+            else:
+                before = len(debts[user_id]["debt_list"])
+                debts[user_id]["debt_list"] = [
+                    debt for debt in debts[user_id]["debt_list"] if debt["who"] != target
+                ]
+                after = len(debts[user_id]["debt_list"])
+
+                if before == after:
+                    reply = f"沒有找到欠 {target} 的紀錄。"
+                else:
+                    reply = f"已清除欠 {target} 的紀錄！"
+            save_debts(debts)
+        else:
+            reply = "你沒有欠款紀錄可以清除喔～"
 
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=reply_text)
+            TextSendMessage(text=reply)
         )
         return
 
     # 正常文字回覆
     if user_message in responses:
         reply_text = random.choice(responses[user_message])
-        print(f"回覆文字: {reply_text}")
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=reply_text)
         )
-    
+        return
+
     # 圖片回覆
-    elif user_message in image_responses:
+    if user_message in image_responses:
         image_url = random.choice(image_responses[user_message])
-        print(f"回覆圖片: {image_url}")
         line_bot_api.reply_message(
             event.reply_token,
             ImageSendMessage(
@@ -166,17 +196,16 @@ def handle_message(event):
                 preview_image_url=image_url
             )
         )
-    
-    # 多關鍵字匹配
-    else:
-        for keywords, reply_text in multi_keyword_responses.items():
-            if all(keyword in user_message for keyword in keywords):
-                print(f"回覆文字: {reply_text}")
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text=reply_text)
-                )
-                return
+        return
+
+    # 多關鍵字匹配回覆
+    for keywords, reply_text in multi_keyword_responses.items():
+        if all(keyword in user_message for keyword in keywords):
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=reply_text)
+            )
+            return
 
     print(f"未匹配的訊息: {user_message}")
 
